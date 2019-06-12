@@ -1,0 +1,23 @@
+version: '3.5'
+
+services:
+  mobile:
+    container_name: iown-app
+    image: node:11-alpine
+    command: "yarn start:${NODE_ENV}"
+    working_dir: '/app'
+    volumes:
+      - ./app:/app
+      - './package.json:/app/package.json'
+    ports:
+      - '${PORT}:3002'
+    env_file:
+      - .env
+    networks:
+      - iown
+
+networks:
+  iown:
+    external: true
+    name: iown-api-network
+    driver: bridge

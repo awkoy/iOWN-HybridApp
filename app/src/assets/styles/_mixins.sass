@@ -1,0 +1,36 @@
+// Responsive
+
+//maxWidth
+=max($width)
+	@media only screen and (max-width: $width+ "px")
+		@content
+		
+// minWidth
+=min($width)
+	@media only screen and (min-width: $width+ "px")
+		@content
+
+// font face
+=font($font-family, $url, $weight, $style)
+    @font-face
+        font-family: '#{$font-family}'
+        src: url('#{$url}.eot')
+        src: url('#{$url}.eot?#iefix') format('embedded-opentype'),
+        url('#{$url}.woff') format('woff'),
+        url('#{$url}.ttf') format('truetype')
+        font-weight: $weight
+        font-style: $style
+
+// placeholder
+=placeholder 
+    &::-webkit-input-placeholder
+        @content
+
+    &::-moz-placeholder
+        @content
+
+    &:-moz-placeholder 
+        @content
+
+    &:-ms-input-placeholder
+        @content
