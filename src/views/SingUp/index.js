@@ -21,10 +21,6 @@ import {
 
 class SignUp extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     nextStep = () => this.props.changeCurrentStep(this.props.signup.activeStep + 1)
     prevStep = () => this.props.changeCurrentStep(this.props.signup.activeStep - 1) 
 
@@ -60,7 +56,7 @@ class SignUp extends React.Component {
     };
 
     render() {
-        const { activeStep, fullName, email, phone, password, confirm, submitEnabled } = this.props.signup;
+        const { activeStep, fullName, email, phone, password, confirm, submitEnabled, submitLoading, serverError } = this.props.signup;
 
         return (
             <Container component="main" maxWidth="xs">
@@ -140,13 +136,19 @@ class SignUp extends React.Component {
                             helperText={confirm.helperText}
                         />
                         <Button className="register__btn" fullWidth variant="contained" disabled={!submitEnabled} color="primary" onClick={this.createAccount}>
-                            Create
-                            <KeyboardArrowRight />
+                            {submitLoading ?
+                                <CircularProgress disableShrink /> :
+                                <> 
+                                    Create
+                                    <KeyboardArrowRight />
+                                </>
+                            }
                         </Button>
+                        <div className="register__error">
+                            {`${serverError}`}
+                        </div>
                     </Box>
                 }
-
-                {activeStep === 2 && <CircularProgress disableShrink />}
             
                 <MobileStepper
                     variant="progress"

@@ -5,6 +5,8 @@ import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 
+import {ROUTE_SIGNUP, ROUTE_SIGNIN} from "../../constants/routes";
+
 const useStyles = makeStyles(theme => ({
     button: {
       marginBottom: theme.spacing(2)
@@ -22,12 +24,12 @@ const Home = () => {
     return (
         <Container className="home" component="main" maxWidth="xs">
             <Box pt={20}>
-                <Link to="/login">
+                <Link to={ROUTE_SIGNIN}>
                     <Button fullWidth variant="contained" color="primary" className={classes.button}>
                         Login
                     </Button>
                 </Link>
-                <Link to="/create-wallet">
+                <Link to={ROUTE_SIGNUP}>
                     <Button fullWidth variant="contained" color="primary" className={classes.button}>
                         Create new wallet
                     </Button>
