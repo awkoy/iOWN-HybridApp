@@ -1,12 +1,12 @@
-import EtherUtil from "../utils/ethers";
 import {ValidationUtil} from "../utils/validationUtil";
+import {ROUTE_CREATE_WALLET} from "../constants/routes";
 
 import {handleFetch} from "../utils/fetch";
 import {performResult} from "../utils/stateManipulator";
+import EtherUtil from "../utils/ethers";
+import history from '../history';
 
-const initialState = {
-
-    
+const initialState = {    
     fullName: {
         value: "",
         error: false,
@@ -35,6 +35,14 @@ const initialState = {
     activeStep: 0,
 
     submitEnabled: false,
+    submitLoading: false,
+    serverError: "",
+
+    mnemonicRaw: "",
+    mnemonic: ["", "", "", "", "", "", "", "", "", "", "", ""],
+    mnemonicConfirm: [],
+    enabledIndexes: [],
+    mnemonicNext: false
 };
 
 const CHANGE_CURRENT_STEP = "CHANGE_CURRENT_STEP";
@@ -46,29 +54,41 @@ const REGISTER_SENT = "REGISTER_SENT";
 const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 const REGISTER_FAILED = "REGISTER_FAILED";
 
+const GENERATE_MNEMONIC = "GENERATE_MNEMONIC";
+const NEXT_STEP_MNEMONIC = "NEXT_STEP_MNEMONIC";
+const CHANGE_MNEMONIC_CONFIRM = "CHANGE_MNEMONIC_CONFIRM";
+
 export const changeCurrentStep = activeStep => ({ type: CHANGE_CURRENT_STEP, activeStep });
 export const changeStartInfo = data => ({ type: CHANGE_START_INFO, data });
 export const changePassword = password => ({type: CHANGE_PASSWORD, password });
 export const changeConfirm = confirm => ({type: CHANGE_CONFIRM, confirm });
 
+
+export const generateMnemonic = () => {
+    const mnemonicRaw = EtherUtil.generateMnemonic();
+
+    return {
+        type: GENERATE_MNEMONIC,
+        mnemonicRaw,
+    }
+};
+export const enableNextMnemonicStep = (mnemonicConfirm, enabledIndexes) => ({ type: NEXT_STEP_MNEMONIC, mnemonicConfirm, enabledIndexes });
+export const changeMnemonicConfirm = (value, index) => ({
+    type: CHANGE_MNEMONIC_CONFIRM,
+    index,
+    value
+});
+
 export const registerAccount = data => dispatch => {
     dispatch({type: REGISTER_SENT});
+    
     return handleFetch("/sign-up", "POST", data)
         .then(res => performResult(res, () => {
             dispatch({type: REGISTER_SUCCESS});
+            history.push(ROUTE_CREATE_WALLET);
         }))
         .catch(err => dispatch({ type: REGISTER_FAILED, err}));
 };
-
-// GENERATE MNEM
-// export const generateMnemonic = () => {
-//     const mnemonicRaw = EtherUtil.generateMnemonic();
-
-//     return {
-//         type: GENERATE_MNEMONIC,
-//         mnemonicRaw,
-//     }
-// };
 
 export const signup = (state = initialState, action) => {
     let error;
@@ -103,6 +123,40 @@ export const signup = (state = initialState, action) => {
             return {
                 ...newState,
                 submitEnabled: isReadyToSubmit(newState),
+            };
+
+        case REGISTER_SENT:
+            return {...state, submitLoading: true}
+
+        case REGISTER_SUCCESS:
+            return {...state, submitLoading: false}
+
+        case REGISTER_FAILED:
+            return {...state, submitLoading: false, serverError: action.err}
+
+        case GENERATE_MNEMONIC:
+            return {
+                ...state,
+                mnemonicRaw: action.mnemonicRaw,
+                mnemonic: action.mnemonicRaw.split(" "),
+                mnemonicConfirm: action.mnemonicRaw.split(" "),
+            };
+
+        case NEXT_STEP_MNEMONIC: 
+            return {
+                ...state,
+                mnemonicNext: true,
+                mnemonicConfirm: action.mnemonicConfirm,
+                enabledIndexes: action.enabledIndexes,
+            }
+
+        case CHANGE_MNEMONIC_CONFIRM:
+            const {mnemonicConfirm} = state;
+            mnemonicConfirm[action.index] = action.value;
+
+            return {
+                ...state,
+                mnemonicConfirm,
             };
 
         default:

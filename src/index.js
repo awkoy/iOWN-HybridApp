@@ -1,28 +1,34 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {createBrowserHistory} from "history";
 import {Provider} from 'react-redux';
 import {Route, Router, Switch} from "react-router-dom";
+import history from "./history";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./views/Home";
 import SignUp from "./views/SingUp";
+import CreateWallet from "./views/CreateWallet";
+import SuccessRegistration from "./views/SuccessRegistration";
 
 import "./assets/styles/index.sass";
 
 import {initializeStore} from "./ducks";
 
+import {ROUTE_SIGNUP, ROUTE_CREATE_WALLET} from "./constants/routes";
+
+
 const store = initializeStore();
-const hist = createBrowserHistory();
 
 ReactDOM.render(
     <Provider store={store}>
-        <Header/>
-        <Router history={hist}>
+        <Router history={history}>
+            <Header/>
             <Switch>
                 <Route exact path={"/"} component={Home} />
-                <Route exact path={"/create-wallet"} component={SignUp} />
+                <Route exact path={ROUTE_SIGNUP} component={SignUp} />
+                <Route exact path={ROUTE_CREATE_WALLET} component={CreateWallet} />
+                <Route exact path={"/success-registration"} component={SuccessRegistration} />
             </Switch>
         </Router>
         <Footer/>
