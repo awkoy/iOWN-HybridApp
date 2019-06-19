@@ -1,5 +1,4 @@
 import React from "react";
-import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
 import MobileStepper from '@material-ui/core/MobileStepper';
@@ -139,9 +138,8 @@ class SignUp extends React.Component {
                             margin="normal"
                             error={confirm.error}
                             helperText={confirm.helperText}
-                            mb={5}
                         />
-                        <Button fullWidth variant="contained" disabled={!submitEnabled} color="primary" onClick={this.createAccount}>
+                        <Button className="register__btn" fullWidth variant="contained" disabled={!submitEnabled} color="primary" onClick={this.createAccount}>
                             Create
                             <KeyboardArrowRight />
                         </Button>
