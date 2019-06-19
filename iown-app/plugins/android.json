@@ -9,6 +9,13 @@
   "installed_plugins": {
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.iown.app"
+    },
+    "cordova-plugin-customurlscheme": {
+      "URL_SCHEME": "iownmobileapp",
+      "ANDROID_SCHEME": " ",
+      "ANDROID_HOST": " ",
+      "ANDROID_PATHPREFIX": "/",
+      "PACKAGE_NAME": "com.iown.app"
     }
   },
   "dependent_plugins": {}

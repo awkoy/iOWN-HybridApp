@@ -20,14 +20,14 @@ const useStyles = makeStyles(theme => ({
 const Home = () => {
     const classes = useStyles();
     return (
-        <Container component="main" maxWidth="xs">
+        <Container className="home" component="main" maxWidth="xs">
             <Box pt={20}>
                 <Link to="/login">
                     <Button fullWidth variant="contained" color="primary" className={classes.button}>
                         Login
                     </Button>
                 </Link>
-                <Link to="/create-new-wallet">
+                <Link to="/create-wallet">
                     <Button fullWidth variant="contained" color="primary" className={classes.button}>
                         Create new wallet
                     </Button>
