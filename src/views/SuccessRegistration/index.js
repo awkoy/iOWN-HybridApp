@@ -1,13 +1,10 @@
 import React from "react";
-import { Link } from 'react-router-dom';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import QRCode from "qrcode.react";
 import CopyIcon from '@material-ui/icons/FileCopy';
-
-import {ROUTE_SIGNUP, ROUTE_SIGNIN} from "../../constants/routes";
 
 const copy = text => {
     console.log(text)

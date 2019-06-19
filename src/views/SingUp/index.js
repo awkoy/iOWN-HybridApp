@@ -87,7 +87,7 @@ class SignUp extends React.Component {
                             margin="normal"
                         />
                         <InputMask
-                            mask="+380934853999"
+                            mask="+999999999999"
                             type="phone"
                             maskChar=" "
                             onChange={this.handleChange('phone')}
