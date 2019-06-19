@@ -1,0 +1,19 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-customurlscheme": {
+      "URL_SCHEME": "iownmobileapp",
+      "PACKAGE_NAME": "com.iown.app"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.iown.app"
+    }
+  },
+  "dependent_plugins": {}
+}

@@ -8,6 +8,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./views/Home";
 import SignUp from "./views/SingUp";
+import SignIn from "./views/SingIn";
 import CreateWallet from "./views/CreateWallet";
 import SuccessRegistration from "./views/SuccessRegistration";
 
@@ -15,7 +16,7 @@ import "./assets/styles/index.sass";
 
 import {initializeStore} from "./ducks";
 
-import {ROUTE_SIGNUP, ROUTE_CREATE_WALLET} from "./constants/routes";
+import {ROUTE_SIGNUP, ROUTE_CREATE_WALLET, ROUTE_SIGNIN} from "./constants/routes";
 
 
 const store = initializeStore();
@@ -27,6 +28,7 @@ ReactDOM.render(
             <Switch>
                 <Route exact path={"/"} component={Home} />
                 <Route exact path={ROUTE_SIGNUP} component={SignUp} />
+                <Route exact path={ROUTE_SIGNIN} component={SignIn} />
                 <Route exact path={ROUTE_CREATE_WALLET} component={CreateWallet} />
                 <Route exact path={"/success-registration"} component={SuccessRegistration} />
             </Switch>
