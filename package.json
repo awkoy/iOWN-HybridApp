@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "IOWN Mobile App",
   "private": true,
-  "homepage": "/",
+  "homepage": "./",
   "main": "src/index.js",
   "dependencies": {
     "@material-ui/core": "4.1.1",
@@ -30,11 +30,7 @@
     "redux": "4.0.1",
     "redux-form": "8.2.4",
     "redux-logger": "3.0.6",
-    "redux-thunk": "2.3.0",
-    "styled-components": "4.3.1",
-    "cordova-android": "^8.0.0",
-    "cordova-ios": "^5.0.1",
-    "cordova-plugin-customurlscheme": "^4.4.0"
+    "redux-thunk": "2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -51,20 +47,5 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ],
-  "cordova": {
-    "plugins": {
-      "cordova-plugin-whitelist": {},
-      "cordova-plugin-customurlscheme": {
-        "URL_SCHEME": "iownmobileapp",
-        "ANDROID_SCHEME": " ",
-        "ANDROID_HOST": " ",
-        "ANDROID_PATHPREFIX": "/"
-      }
-    },
-    "platforms": [
-      "ios",
-      "android"
-    ]
-  }
+  ]
 }

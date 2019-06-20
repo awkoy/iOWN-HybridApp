@@ -42,7 +42,8 @@ const initialState = {
     mnemonic: ["", "", "", "", "", "", "", "", "", "", "", ""],
     mnemonicConfirm: [],
     enabledIndexes: [],
-    mnemonicNext: false
+    mnemonicNext: false,
+    walletAddress: ""
 };
 
 const CHANGE_CURRENT_STEP = "CHANGE_CURRENT_STEP";
@@ -57,6 +58,8 @@ const REGISTER_FAILED = "REGISTER_FAILED";
 const GENERATE_MNEMONIC = "GENERATE_MNEMONIC";
 const NEXT_STEP_MNEMONIC = "NEXT_STEP_MNEMONIC";
 const CHANGE_MNEMONIC_CONFIRM = "CHANGE_MNEMONIC_CONFIRM";
+
+const CREATE_WALLET = "CREATE_WALLET";
 
 export const changeCurrentStep = activeStep => ({ type: CHANGE_CURRENT_STEP, activeStep });
 export const changeStartInfo = data => ({ type: CHANGE_START_INFO, data });
@@ -78,6 +81,8 @@ export const changeMnemonicConfirm = (value, index) => ({
     index,
     value
 });
+
+export const handleCreateWallet = wallet => ({type: CREATE_WALLET, wallet});
 
 export const registerAccount = data => dispatch => {
     dispatch({type: REGISTER_SENT});
@@ -157,6 +162,12 @@ export const signup = (state = initialState, action) => {
             return {
                 ...state,
                 mnemonicConfirm,
+            };
+
+        case CREATE_WALLET:
+            return {
+                ...state,
+                walletAddress: action.wallet.address,
             };
 
         default:
