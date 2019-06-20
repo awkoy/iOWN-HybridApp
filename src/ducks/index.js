@@ -3,9 +3,11 @@ import {createLogger} from "redux-logger";
 import {createStore, applyMiddleware, combineReducers} from "redux";
 
 import {signup} from "./signup";
+import {signin} from "./signin";
 
 const reducer = combineReducers({
     signup,
+    signin
 });
 
 export function initializeStore(initialState = {}, options = {}) {
