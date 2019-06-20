@@ -35,6 +35,7 @@ ReactDOM.render(
                 <Route exact path={"/about"} component={ComingSoon} />
                 <Route exact path={"/private-policy"} component={ComingSoon} />
                 <Route exact path={"/cookies-policy"} component={ComingSoon} />
+                <Route exact path={"/coming-soon"} component={ComingSoon} />
                 <Route exact path={"/dashboard"} component={Dashboard} />
             </Switch>
         </Router>
