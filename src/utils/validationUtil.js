@@ -11,6 +11,7 @@ export class ValidationUtil {
     static isWeakPassword = password => {
         return !!(RegExps.passwordLetters.test(password) ||
             RegExps.digits.test(password) ||
+            !RegExps.minLength8.test(password) ||
             (password.toUpperCase() === password) ||
             (password.toLowerCase() === password));
     };

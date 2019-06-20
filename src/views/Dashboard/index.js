@@ -36,7 +36,6 @@ class Dashboard extends React.Component {
         });
     }
     handleCloseAlert = () => this.setState({openAlert: false});
-
     handleTabChange = (e, currentTab) => this.setState({currentTab});
 
     render () {
@@ -94,10 +93,15 @@ class Dashboard extends React.Component {
                         </div>
                     </Box>
                 </Box>
-                <Box pt={4}>
+                <Box pt={4} className="dashboard__actions">
                     <Link to="/coming-soon">
                         <Button color="primary" variant="contained">
                             Refresh
+                        </Button>
+                    </Link>
+                    <Link to="/">
+                        <Button color="primary" variant="contained">
+                            Logout
                         </Button>
                     </Link>
                 </Box>
