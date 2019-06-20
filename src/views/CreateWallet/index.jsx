@@ -11,7 +11,8 @@ import history from '../../history';
 import {
     generateMnemonic,
     enableNextMnemonicStep,
-    changeMnemonicConfirm
+    changeMnemonicConfirm,
+    handleCreateWallet
 } from "../../ducks/signup";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -24,7 +25,8 @@ class CreateWallet extends React.Component {
         this.props.generateMnemonic();
 
         this.state = {
-            openAlert: false
+            openAlert: false,
+            loading: false,
         }
     }
 
@@ -40,12 +42,22 @@ class CreateWallet extends React.Component {
     }
 
     createWallet = async () => {
-        const {mnemonic, mnemonicRaw, mnemonicConfirm} = this.props.signup;
+        const {mnemonic, mnemonicRaw, mnemonicConfirm, password} = this.props.signup;
 
         const isValid = mnemonic.every((i, j) => i === mnemonicConfirm[j])
 
         if (isValid) {
-            await EtherUtil.createFromMnemonic(mnemonicRaw);
+            this.setState({loading: true});
+            const wallet = await EtherUtil.createFromMnemonic(mnemonicRaw);
+            const walletJson = await wallet.encrypt(password.value);
+
+            localStorage.setItem("wallet-json", walletJson);
+            localStorage.setItem("wallet-password", password.value);
+
+            this.props.handleCreateWallet(wallet);
+            this.setState({loading: false});
+            
+            console.log(wallet)
             history.push("/success-registration");
         } else {
             this.setState({openAlert: true})
@@ -56,7 +68,7 @@ class CreateWallet extends React.Component {
 
     render() {
         const {mnemonic, mnemonicRaw, mnemonicNext, mnemonicConfirm, enabledIndexes} = this.props.signup;
-        const { openAlert } = this.state;
+        const { openAlert, loading } = this.state;
 
         return (
             <Container component="main" maxWidth="xs">
@@ -95,7 +107,7 @@ class CreateWallet extends React.Component {
                         }  
 
                         <Button color="primary" className="register__btn" onClick={this.createWallet} fullWidth variant="contained">
-                            Confirm
+                            {loading ? <CircularProgress/> : "Confirm"}
                         </Button>
                     </>
                 }
@@ -123,7 +135,8 @@ const mapState2props = state => ({
 const mapDispatch2props = {
     generateMnemonic,
     enableNextMnemonicStep,
-    changeMnemonicConfirm
+    changeMnemonicConfirm,
+    handleCreateWallet
 };
 
 export default connect(mapState2props, mapDispatch2props)(CreateWallet);

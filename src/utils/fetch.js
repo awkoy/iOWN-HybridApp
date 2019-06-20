@@ -16,7 +16,7 @@ export const handleFetch = (url, method, body, isServer = false, cookies = null)
         headers['Cookie'] = Object.keys(cookies).map(i => serialize(i, cookies[i]) + ";").join(" ");
     }
 
-    return fetch(`https://api.iown.firstbridge.work/api${url}${urlPostfix}`, {
+    return fetch(`http://localhost:3000/api${url}${urlPostfix}`, {
         method,
         headers,
         credentials: 'include',
