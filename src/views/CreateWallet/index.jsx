@@ -52,12 +52,11 @@ class CreateWallet extends React.Component {
             const walletJson = await wallet.encrypt(password.value);
 
             localStorage.setItem("wallet-json", walletJson);
+            localStorage.setItem("wallet-private-key", wallet.privateKey);
             localStorage.setItem("wallet-password", password.value);
 
-            this.props.handleCreateWallet(wallet);
+            await this.props.handleCreateWallet(wallet);
             this.setState({loading: false});
-            
-            console.log(wallet)
             history.push("/success-registration");
         } else {
             this.setState({openAlert: true})
@@ -67,7 +66,7 @@ class CreateWallet extends React.Component {
     handleCloseAlert = () => this.setState({openAlert: false})
 
     render() {
-        const {mnemonic, mnemonicRaw, mnemonicNext, mnemonicConfirm, enabledIndexes} = this.props.signup;
+        const {mnemonic, mnemonicRaw, mnemonicNext, mnemonicConfirm, enabledIndexes, serverError} = this.props.signup;
         const { openAlert, loading } = this.state;
 
         return (
@@ -111,6 +110,10 @@ class CreateWallet extends React.Component {
                         </Button>
                     </>
                 }
+
+                <div className="register__error">
+                    {`${serverError}`}
+                </div>
 
                 <Snackbar
                     anchorOrigin={{ horizontal: "right", vertical: "bottom" }}

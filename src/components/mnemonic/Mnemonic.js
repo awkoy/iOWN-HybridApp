@@ -24,6 +24,9 @@ export default class Mnemonic extends React.Component {
                             disabled={(!editable) || !enabledIndexes.includes(indexes[j])}
                             value={mnemonic[indexes[j]]}
                             variant="filled"
+                            inputProps={{
+                                autoCapitalize: 'none',
+                            }}
                             onChange={editable ? e => onChange(e.target.value, indexes[j]) : null}
                         />
                     </Box>
@@ -34,6 +37,9 @@ export default class Mnemonic extends React.Component {
                             label={indexes[j] + 1}
                             value={mnemonic[indexes[j]]}
                             variant="filled"
+                            inputProps={{
+                                autoCapitalize: 'none',
+                            }}
                             onChange={editable ? e => onChange(e.target.value, indexes[j]) : null}
                         />
                     </Box>
