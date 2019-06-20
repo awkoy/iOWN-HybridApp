@@ -162,7 +162,7 @@ class SignUp extends React.Component {
                         </Button>
                     }
                     backButton={
-                        <Button size="small" onClick={this.prevStep} disabled={activeStep === 0}>
+                        <Button size="small" onClick={activeStep === 0 ? () => this.props.history.goBack() : this.prevStep}>
                             <KeyboardArrowLeft />
                             Back
                         </Button>

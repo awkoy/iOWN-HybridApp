@@ -10,21 +10,34 @@ export default class Mnemonic extends React.Component {
         const {
             mnemonic,
             editable,
+            fullEditable,
             enabledIndexes,
             onChange,
         } = this.props;
 
         return mnemonic.filter((i, j) => indexes.includes(j)).map((i, j) =>
             <div className={"mnemonic-cell"} key={j}>
-                <Box p={1}>
-                    <TextField
-                        label={indexes[j] + 1}
-                        disabled={!editable || !enabledIndexes.includes(indexes[j])}
-                        value={mnemonic[indexes[j]]}
-                        variant="filled"
-                        onChange={editable ? e => onChange(e.target.value, indexes[j]) : null}
-                    />
-                </Box>
+                {!fullEditable &&
+                    <Box p={1}>
+                        <TextField
+                            label={indexes[j] + 1}
+                            disabled={(!editable) || !enabledIndexes.includes(indexes[j])}
+                            value={mnemonic[indexes[j]]}
+                            variant="filled"
+                            onChange={editable ? e => onChange(e.target.value, indexes[j]) : null}
+                        />
+                    </Box>
+                }
+                {fullEditable &&
+                    <Box p={1}>
+                        <TextField
+                            label={indexes[j] + 1}
+                            value={mnemonic[indexes[j]]}
+                            variant="filled"
+                            onChange={editable ? e => onChange(e.target.value, indexes[j]) : null}
+                        />
+                    </Box>
+                }
             </div>);
     };
 

@@ -11,13 +11,14 @@ import SignUp from "./views/SingUp";
 import SignIn from "./views/SingIn";
 import CreateWallet from "./views/CreateWallet";
 import SuccessRegistration from "./views/SuccessRegistration";
+import ComingSoon from "./views/ComingSoon";
+import Dashboard from "./views/Dashboard";
 
 import "./assets/styles/index.sass";
 
 import {initializeStore} from "./ducks";
 
 import {ROUTE_SIGNUP, ROUTE_CREATE_WALLET, ROUTE_SIGNIN} from "./constants/routes";
-
 
 const store = initializeStore();
 
@@ -31,6 +32,10 @@ ReactDOM.render(
                 <Route exact path={ROUTE_SIGNIN} component={SignIn} />
                 <Route exact path={ROUTE_CREATE_WALLET} component={CreateWallet} />
                 <Route exact path={"/success-registration"} component={SuccessRegistration} />
+                <Route exact path={"/about"} component={ComingSoon} />
+                <Route exact path={"/private-policy"} component={ComingSoon} />
+                <Route exact path={"/cookies-policy"} component={ComingSoon} />
+                <Route exact path={"/dashboard"} component={Dashboard} />
             </Switch>
         </Router>
         <Footer/>
