@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import InputMask from 'react-input-mask';
 import {connect} from "react-redux";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import {
     changeCurrentStep,
@@ -21,6 +22,14 @@ import {
 
 class SignUp extends React.Component {
 
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            captcha: false
+        }
+    }
+
     nextStep = () => this.props.changeCurrentStep(this.props.signup.activeStep + 1)
     prevStep = () => this.props.changeCurrentStep(this.props.signup.activeStep - 1) 
 
@@ -30,7 +39,7 @@ class SignUp extends React.Component {
             value: event.target.value
         });
     };
-
+    onCaptchaChange = captcha => this.setState({captcha})
     handleChangePassword = event => {
         this.props.changePassword(event.target.value);
     };
@@ -57,6 +66,8 @@ class SignUp extends React.Component {
 
     render() {
         const { activeStep, fullName, email, phone, password, confirm, submitEnabled, submitLoading, serverError } = this.props.signup;
+
+        const {captcha} = this.state;
 
         return (
             <Container component="main" maxWidth="xs">
@@ -113,6 +124,12 @@ class SignUp extends React.Component {
                             error={password.error}
                             helperText={password.helperText}
                         />
+                        <Box pt={4}>
+                            <ReCAPTCHA
+                                sitekey={"6Lep4KkUAAAAAELJE5-uSfnYP6Xr_0Ik2YRs3OSU"}
+                                onChange={this.onCaptchaChange}
+                            />
+                        </Box>
                     </Box>
                 }
     
@@ -135,7 +152,7 @@ class SignUp extends React.Component {
                             error={confirm.error}
                             helperText={confirm.helperText}
                         />
-                        <Button className="register__btn" fullWidth variant="contained" disabled={!submitEnabled} color="primary" onClick={this.createAccount}>
+                        <Button className="register__btn" fullWidth variant="contained" disabled={!submitEnabled || !captcha} color="primary" onClick={this.createAccount}>
                             {submitLoading ?
                                 <CircularProgress disableShrink /> :
                                 <> 

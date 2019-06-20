@@ -35,7 +35,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "move": "mv build www || move build www", 
+    "move": "mv build www || move build www",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
