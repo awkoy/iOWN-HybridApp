@@ -7,20 +7,33 @@ import Typography from '@material-ui/core/Typography';
 import QRCode from "qrcode.react";
 import CopyIcon from '@material-ui/icons/FileCopy';
 import {connect} from "react-redux";
-
-const copy = text => {
-    const textField = document.createElement('textarea')
-    textField.innerText = text;
-    document.body.appendChild(textField)
-    textField.select()
-    document.execCommand('copy')
-    textField.remove()
-}
+import Snackbar from '@material-ui/core/Snackbar';
 
 class SuccessRegistration extends React.Component {
 
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            openAlert: false
+        }
+    }
+
+    copy = text => {
+        const textField = document.createElement('textarea')
+        textField.innerText = text;
+        document.body.appendChild(textField)
+        textField.select()
+        document.execCommand('copy')
+        textField.remove()
+        this.setState({openAlert: true})
+    }
+
+    handleCloseAlert = () => this.setState({openAlert: false});
+
     render () {
         const {walletAddress} = this.props.signup;
+        const {openAlert} = this.state;
         return (
             <Container className="home" component="main" maxWidth="xs">
                 <Typography variant="h5" align="center" gutterBottom>
@@ -33,13 +46,24 @@ class SuccessRegistration extends React.Component {
                     <div className="copy__code__text">
                         {walletAddress}
                     </div>
-                    <CopyIcon onClick={() => copy(walletAddress)} />
+                    <CopyIcon onClick={() => this.copy('walletAddress')} />
                 </span>
                 <Link to="/dashboard">
                     <Button color="primary" className="register__btn" fullWidth variant="contained">
                         Next
                     </Button>
                 </Link>
+
+                <Snackbar
+                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                    key={`copyboard alert`}
+                    open={openAlert}
+                    onClose={this.handleCloseAlert}
+                    ContentProps={{
+                        'aria-describedby': 'message-id',
+                    }}
+                    message={"Address copied!"}
+                />
             </Container>
         );
     }

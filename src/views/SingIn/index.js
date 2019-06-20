@@ -8,8 +8,13 @@ import {connect} from "react-redux";
 import Box from '@material-ui/core/Box';
 import Mnemonic from "../../components/mnemonic/Mnemonic";
 
+import EtherUtil from "../../utils/ethers";
+
 import {
-    changeLoginPassword
+    changeLoginPassword,
+    changeLoginMnemonic,
+    walletNotFound,
+    login
 } from "../../ducks/signin";
 
 class SignIn extends React.Component {
@@ -18,20 +23,38 @@ class SignIn extends React.Component {
         this.props.changeLoginPassword(event.target.value);
     };
 
-    login = () => {
+    passwordLogin = async () => {
         const {
-            password,
-            walletAddress
+            walletPassword,
+            walletJson
         } = this.props.signin;
 
-        this.props.registerAccount({
-            walletAddress,
-            password: password.value
-        })
+        const json = JSON.stringify(walletJson);
+        const key = localStorage.getItem("wallet-private-key");
+
+        const wallet = await EtherUtil.accessWalletByPrivateKey(key);
+
+        console.log(wallet)
+
+        if (!wallet) {
+            return this.props.walletNotFound();
+        }
+
+        await this.props.login(wallet, walletPassword);
     };
 
+    onMnemonicLoginClick = async () => {
+        const mnemonicString = this.props.signin.loginMnemonic.value.join(' ');
+        const wallet = await EtherUtil.accessWalletByMnemonic(mnemonicString);
+        if (!wallet) {
+            return this.props.walletNotFound();
+        }
+
+        await this.props.login(wallet);
+    }
+
     render() {
-        const { password, submitEnabled, submitLoading, walletPassword, mnemonic } = this.props.signin;
+        const { password, submitEnabled, submitLoading, walletPassword, loginMnemonic, failed, error } = this.props.signin;
 
         return (
             <Container component="main" maxWidth="xs">
@@ -51,7 +74,7 @@ class SignIn extends React.Component {
                         error={password.error}
                         helperText={password.helperText}
                     />
-                    <Button className="register__btn" fullWidth variant="contained" disabled={!submitEnabled} color="primary">
+                    <Button className="register__btn" onClick={this.passwordLogin} fullWidth variant="contained" disabled={!submitEnabled} color="primary">
                         {submitLoading ?
                             <CircularProgress disableShrink /> :
                             <> 
@@ -65,10 +88,10 @@ class SignIn extends React.Component {
                     <Mnemonic
                         editable
                         fullEditable
-                        mnemonic={mnemonic.value}
-                        onChange={this.props.changeMnemonic}
+                        mnemonic={loginMnemonic.value}
+                        onChange={this.props.changeLoginMnemonic}
                     />
-                    <Button className="register__btn" fullWidth variant="contained" disabled={!submitEnabled} color="primary">
+                    <Button className="register__btn" onClick={this.onMnemonicLoginClick} fullWidth variant="contained" disabled={!submitEnabled} color="primary">
                         {submitLoading ?
                             <CircularProgress disableShrink /> :
                             <> 
@@ -77,6 +100,9 @@ class SignIn extends React.Component {
                         }
                     </Button>
                 </Box>}
+                <div className="register__error">
+                    {failed && `${error}`}
+                </div>
             </Container>
         );
     }
@@ -87,7 +113,10 @@ const mapState2props = state => ({
 });
 
 const mapDispatch2props = {
-    changeLoginPassword
+    changeLoginPassword,
+    changeLoginMnemonic,
+    walletNotFound,
+    login
 };
 
 export default connect(mapState2props, mapDispatch2props)(SignIn);

@@ -55,6 +55,10 @@ const REGISTER_SENT = "REGISTER_SENT";
 const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 const REGISTER_FAILED = "REGISTER_FAILED";
 
+const REGISTER_WALLET_SENT = "REGISTER_WALLET_SENT";
+const REGISTER_WALLET_SUCCESS = "REGISTER_WALLET_SUCCESS";
+const REGISTER_WALLET_FAILED = "REGISTER_WALLET_FAILED";
+
 const GENERATE_MNEMONIC = "GENERATE_MNEMONIC";
 const NEXT_STEP_MNEMONIC = "NEXT_STEP_MNEMONIC";
 const CHANGE_MNEMONIC_CONFIRM = "CHANGE_MNEMONIC_CONFIRM";
@@ -82,7 +86,15 @@ export const changeMnemonicConfirm = (value, index) => ({
     value
 });
 
-export const handleCreateWallet = wallet => ({type: CREATE_WALLET, wallet});
+export const handleCreateWallet = wallet => dispatch => {
+    dispatch({type: REGISTER_WALLET_SENT});
+    return handleFetch("/profile/save-wallet", "POST", {wallet: wallet.address})
+        .then(res => performResult(res, () => {
+            dispatch({type: REGISTER_WALLET_SUCCESS});
+            dispatch({type: CREATE_WALLET, wallet});
+        }))
+        .catch(err => dispatch({ type: REGISTER_WALLET_FAILED, err}));
+}
 
 export const registerAccount = data => dispatch => {
     dispatch({type: REGISTER_SENT});
@@ -134,9 +146,18 @@ export const signup = (state = initialState, action) => {
             return {...state, submitLoading: true}
 
         case REGISTER_SUCCESS:
-            return {...state, submitLoading: false}
+            return {...state, submitLoading: false, serverError: ""}
 
         case REGISTER_FAILED:
+            return {...state, submitLoading: false, serverError: action.err}
+
+        case REGISTER_WALLET_SENT:
+            return {...state, submitLoading: true}
+        
+        case REGISTER_WALLET_SUCCESS:
+            return {...state, submitLoading: false, serverError: ""}
+        
+        case REGISTER_WALLET_FAILED:
             return {...state, submitLoading: false, serverError: action.err}
 
         case GENERATE_MNEMONIC:

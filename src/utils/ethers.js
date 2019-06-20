@@ -13,6 +13,22 @@ export default class EtherUtil {
         }
     };
 
+    static accessWalletByJson = async (json, password) => {
+        try {
+            return await ethers.Wallet.fromEncryptedJson(json, password).connect(provider)
+        } catch (err) {
+            return false;
+        }
+    }
+
+    static accessWalletByPrivateKey = async (key) => {
+        try {
+            return await new ethers.Wallet(key, provider)
+        } catch (err) {
+            return false;
+        }
+    }
+
     static generateMnemonic = () => ethers.utils.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
 
     static createKeystore = password => {
