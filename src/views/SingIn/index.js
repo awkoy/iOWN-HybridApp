@@ -53,6 +53,8 @@ class SignIn extends React.Component {
         await this.props.login(wallet);
     }
 
+    goBack = () => this.props.history.goBack();
+    
     render() {
         const { password, submitEnabled, submitLoading, walletPassword, loginMnemonic, failed, error } = this.props.signin;
 
@@ -100,6 +102,12 @@ class SignIn extends React.Component {
                         }
                     </Button>
                 </Box>}
+                
+                <Box pt={2}>
+                    <Button onClick={this.goBack} fullWidth variant="contained" color="primary">
+                        Back
+                    </Button>
+                </Box>
                 <div className="register__error">
                     {failed && `${error}`}
                 </div>

@@ -74,7 +74,7 @@ class CreateWallet extends React.Component {
                 {!mnemonicNext &&
                     <>
                         <Typography variant="subtitle1" align="center" gutterBottom>
-                            Safe this phrases for login
+                            Save this phrases for login
                         </Typography>
                         {
                             mnemonicRaw ?

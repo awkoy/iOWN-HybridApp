@@ -6,6 +6,6 @@ export const RegExps = {
     digits: /^[0-9]+$/,
     digitsNotZero: /^[1-9][0-9]*$/,
     passwordLetters: /^[a-zA-Z]+$/,
-    minLength6: /^.{6,}$/,
+    minLength8: /^.{8,}$/,
     mnemonic: /^([a-z]+ ){11}[a-z]+$/,
 };
