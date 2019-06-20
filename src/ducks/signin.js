@@ -95,7 +95,13 @@ export const signin = (state = initialState, action) => {
                 return {...state, failed: false, submitLoading: true};
             
             case LOGIN_SUCCESS:
-                return {...state, submitLoading: false, mnemonic: {value: "", error: false, helperText: ""}};
+                return {...state, submitLoading: false, mnemonic: {value: "", error: false, helperText: ""}, 
+                    password: {
+                        value: "",
+                        error: false,
+                        helperText: "",
+                    }
+                };
             
             case LOGIN_FAILED:
                 return {...state, failed: true, error: action.err, submitLoading: false};

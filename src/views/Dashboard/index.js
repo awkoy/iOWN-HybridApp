@@ -44,9 +44,11 @@ class Dashboard extends React.Component {
         const {openAlert, currentTab} = this.state;
         return (
             <Container className="home dashboard" component="main" maxWidth="xs">
-                <Fab className="dashboard__menu-btn">
-                    <DotsIcon />
-                </Fab>
+                <Link to="/coming-soon">
+                    <Fab className="dashboard__menu-btn">
+                        <DotsIcon />
+                    </Fab>
+                </Link>
                 <Typography variant="subtitle2" align="center" gutterBottom>
                     youremail@mail.com
                 </Typography>

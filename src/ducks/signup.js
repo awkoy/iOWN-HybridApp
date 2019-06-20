@@ -155,10 +155,44 @@ export const signup = (state = initialState, action) => {
             return {...state, submitLoading: true}
         
         case REGISTER_WALLET_SUCCESS:
-            return {...state, submitLoading: false, serverError: ""}
+            return {
+                ...state, 
+                submitLoading: false, 
+                serverError: "",
+                activeStep: 0,
+                fullName: {
+                    value: "",
+                    error: false,
+                    helperText: "",
+                },
+                phone: {
+                    value: "",
+                    error: false,
+                    helperText: "",
+                },
+                email: {
+                    value: "",
+                    error: false,
+                    helperText: "",
+                },
+                password: {
+                    value: "",
+                    error: false,
+                    helperText: "",
+                },
+                confirm: {
+                    value: "",
+                    error: false,
+                    helperText: "",
+                },
+            }
         
         case REGISTER_WALLET_FAILED:
-            return {...state, submitLoading: false, serverError: action.err}
+            return {    
+                ...state, 
+                submitLoading: false, 
+                serverError: action.err,
+            }
 
         case GENERATE_MNEMONIC:
             return {
