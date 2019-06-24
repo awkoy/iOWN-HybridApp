@@ -2,6 +2,7 @@ import React from 'react'
 import { Field, reduxForm } from 'redux-form'
 import CustomInput from '../Field';
 import {required, email, phone} from "../../../utils/validation";
+import asyncValidate from '../../../utils//asyncValidation';
 
 const SignUpStartForm = props => {
   const { handleSubmit } = props;
@@ -38,5 +39,7 @@ const SignUpStartForm = props => {
 
 export default reduxForm({
   form: 'signup-start',
-  destroyOnUnmount: false
+  destroyOnUnmount: false,
+  asyncValidate,
+  asyncBlurFields: ['email', 'phone']
 })(SignUpStartForm)
