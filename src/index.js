@@ -9,6 +9,8 @@ import Footer from "./components/Footer";
 import Home from "./views/Home";
 import SignUp from "./views/SingUp";
 import SignIn from "./views/SingIn";
+import NewSignIn from "./views/SingIn/NewSignIn";
+import OldSignIn from "./views/SingIn/OldSignIn";
 import CreateWallet from "./views/CreateWallet";
 import SuccessRegistration from "./views/SuccessRegistration";
 import ComingSoon from "./views/ComingSoon";
@@ -22,6 +24,8 @@ import {
     ROUTE_SIGNUP,
     ROUTE_CREATE_WALLET,
     ROUTE_SIGNIN,
+    ROUTE_SIGNIN_NEW,
+    ROUTE_SIGNIN_OLD,
     ROUTE_INDEX,
     ROUTE_SUCCESS_REGISTRATION,
     ROUTE_ABOUT,

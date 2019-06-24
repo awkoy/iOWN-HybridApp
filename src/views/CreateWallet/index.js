@@ -12,8 +12,14 @@ import {
     generateMnemonic,
     enableNextMnemonicStep,
     changeMnemonicConfirm,
-    handleCreateWallet
+    handleCreateWallet,
+    registerAccount
 } from "../../ducks/signup";
+
+import {
+    getFormValues,
+    isValid
+} from 'redux-form';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -42,20 +48,32 @@ class CreateWallet extends React.Component {
     }
 
     createWallet = async () => {
-        const {mnemonic, mnemonicRaw, mnemonicConfirm, password} = this.props.signup;
+        const {mnemonic, mnemonicRaw, mnemonicConfirm} = this.props.signup;
+        const {
+            fullName,
+            phone,
+            email
+        } = this.props.startFormValues;
+        const {
+            password
+        } = this.props.endFormValues;
 
         const isValid = mnemonic.every((i, j) => i === mnemonicConfirm[j])
 
         if (isValid) {
             this.setState({loading: true});
             const wallet = await EtherUtil.createFromMnemonic(mnemonicRaw);
-            const walletJson = await wallet.encrypt(password.value);
 
-            localStorage.setItem("wallet-json", walletJson);
             localStorage.setItem("wallet-private-key", wallet.privateKey);
-            localStorage.setItem("wallet-password", password.value);
+            localStorage.setItem("wallet-password", password);
 
-            await this.props.handleCreateWallet(wallet);
+            await this.props.registerAccount({
+                fullName,
+                phone,
+                email,
+                password,
+                wallet: wallet.address
+            })
             this.setState({loading: false});
             history.push("/success-registration");
         } else {
@@ -132,14 +150,17 @@ class CreateWallet extends React.Component {
 };
 
 const mapState2props = state => ({
-    signup: state.signup
+    signup: state.signup,
+    startFormValues: getFormValues('signup-start')(state),
+    endFormValues: getFormValues('signup-end')(state),
 });
 
 const mapDispatch2props = {
     generateMnemonic,
     enableNextMnemonicStep,
     changeMnemonicConfirm,
-    handleCreateWallet
+    handleCreateWallet,
+    registerAccount
 };
 
 export default connect(mapState2props, mapDispatch2props)(CreateWallet);
