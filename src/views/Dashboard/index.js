@@ -12,6 +12,12 @@ import { Link } from 'react-router-dom';
 import TransactionsTable from '../../components/Table';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Drawer from '@material-ui/core/Drawer';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import MailIcon from '@material-ui/icons/Mail';
 
 class Dashboard extends React.Component {
 
@@ -20,9 +26,12 @@ class Dashboard extends React.Component {
 
         this.state = {
             openAlert: false,
-            currentTab: 0
+            currentTab: 0,
+            menuOpened: false
         }
     }
+
+    toggleMenu = val => this.setState({menuOpened: val})
 
     copy = text => {
         const textField = document.createElement('textarea');
@@ -43,11 +52,9 @@ class Dashboard extends React.Component {
         const {openAlert, currentTab} = this.state;
         return (
             <Container className="home dashboard" component="main" maxWidth="xs">
-                <Link to="/coming-soon">
-                    <Fab className="dashboard__menu-btn">
-                        <DotsIcon />
-                    </Fab>
-                </Link>
+                <Fab onClick={() => this.toggleMenu(true)} className="dashboard__menu-btn">
+                    <DotsIcon />
+                </Fab>
                 <Typography variant="subtitle2" align="center" gutterBottom>
                     youremail@mail.com
                 </Typography>
@@ -108,6 +115,17 @@ class Dashboard extends React.Component {
                 
 
                 <TransactionsTable />
+
+                <Drawer anchor="right" open={this.state.menuOpened} onClose={() => this.toggleMenu(false)}>
+                    {['Edit Account Info', 'Edit Password', 'Logout'].map((text, index) => (
+                        <Link to="/coming-soon">
+                            <ListItem button key={text}>
+                                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                                <ListItemText primary={text} />
+                            </ListItem>
+                        </Link>
+                    ))}
+                </Drawer>
 
                 <Snackbar
                     anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
