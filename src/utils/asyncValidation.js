@@ -1,4 +1,5 @@
 import { handleFetch } from "./fetch";
+import transformError from "./transformServerErrors";
 
 const composeAsyncValidators = (validatorFns) => {
     return async (values, dispatch, props, field) => {
@@ -9,11 +10,11 @@ const composeAsyncValidators = (validatorFns) => {
 
 const emailValidate = values => handleFetch("/validation/email", "POST", {
     email: values.email,
-}).then(res => {if(!res.success) throw {email: "That email already is taken"}});
+}).then(res => {if(!res.success) throw {email: transformError(res.payload[0])}});
 
 const phoneValidate = values => handleFetch("/validation/phone", "POST", {
     phone: values.phone,
-}).then(res => {if(!res.success) throw {phone: "That phone already is taken"}});
+}).then(res => {if(!res.success) throw {phone: transformError(res.payload[0])}});
 
 const asyncValidate = composeAsyncValidators({
     email: emailValidate,

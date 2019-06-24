@@ -22,10 +22,20 @@ import EtherUtil from "../../utils/ethers";
 import {
     changeLoginMnemonic,
     walletNotFound,
-    loginWithEmail
+    loginWithEmail,
+    mnemonicError,
+    resetSignIn
 } from "../../ducks/signin";
 
 class NewSignIn extends React.Component {
+    
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            mnemonicLoader: false
+        }
+    }
 
     submitLoginEmail = async () => {
         const {
@@ -37,32 +47,39 @@ class NewSignIn extends React.Component {
     }
 
     checkMnemonic = async () => {
+        const { password } = this.props.formValues;
+        const { walletAddress } = this.props.signin;
+        
         const mnemonicString = this.props.signin.loginMnemonic.value.join(' ');
-        const { address: newWalletAddress } = await EtherUtil.accessWalletByMnemonic(mnemonicString);
-        const key = localStorage.getItem("wallet-private-key");
-        const { address: oldWalletAddress } = await EtherUtil.accessWalletByPrivateKey(key);
+        const { address: newWalletAddress, privateKey: pvkey } = await EtherUtil.accessWalletByMnemonic(mnemonicString);
 
-        const isConfirm = newWalletAddress === oldWalletAddress;
+        if(!newWalletAddress) { return this.props.mnemonicError("This wallet not found")}
+
+        const isConfirm = newWalletAddress === walletAddress;
+
+        console.log(newWalletAddress, walletAddress, isConfirm)
 
         if (!isConfirm) {
             return this.props.walletNotFound();
+        } else {
+            localStorage.setItem("wallet-private-key", pvkey);
+            localStorage.setItem("wallet-password", password);
+            this.props.resetSignIn();
+            history.push("/dashboard");
         }
-
-        history.push("/dashboard");
     }
-
-    goBack = () => this.props.history.goBack();
     
     render() {
-        const { loginMnemonic, failed, error, activeStep, submitEnabled } = this.props.signin;
+        const { loginMnemonic, failed, error, activeStep, submitEnabled, submitLoading } = this.props.signin;
         const { formValid } = this.props;
+        const {mnemonicLoader} = this.state;
 
         return (
             <>
                 {activeStep === 1 && <Box>
                     <SingInNewForm />
                     <Button className="register__btn" onClick={this.submitLoginEmail} fullWidth variant="contained" disabled={!formValid} color="primary">
-                        Login
+                        {!submitLoading ? 'Login' : <CircularProgress size={23}/>}
                     </Button>
                     <Typography variant="subtitle1" align="center" gutterBottom>
                         Or
@@ -81,9 +98,10 @@ class NewSignIn extends React.Component {
                         mnemonic={loginMnemonic.value}
                         onChange={this.props.changeLoginMnemonic}
                     />
-                    <Button className="register__btn" onClick={this.checkMnemonic} disabled={submitEnabled} fullWidth variant="contained" color="primary">
-                        Submit
+                    <Button className="register__btn" onClick={this.checkMnemonic}  fullWidth variant="contained" color="primary">
+                        {!mnemonicLoader ? 'Submit' : <CircularProgress size={23}/>}
                     </Button>
+                    {/* disabled={submitEnabled} */}
                 </Box>}
                 
                 <div className="register__error">
@@ -103,7 +121,9 @@ const mapState2props = state => ({
 const mapDispatch2props = {
     changeLoginMnemonic,
     walletNotFound,
-    loginWithEmail
+    loginWithEmail,
+    mnemonicError,
+    resetSignIn
 };
 
 export default connect(mapState2props, mapDispatch2props)(NewSignIn);

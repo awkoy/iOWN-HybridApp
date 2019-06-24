@@ -46,7 +46,7 @@ class SuccessRegistration extends React.Component {
                     <div className="copy__code__text">
                         {walletAddress}
                     </div>
-                    <CopyIcon onClick={() => this.copy('walletAddress')} />
+                    <CopyIcon onClick={() => this.copy(walletAddress)} />
                 </span>
                 <Link to="/dashboard">
                     <Button color="primary" className="register__btn" fullWidth variant="contained">
