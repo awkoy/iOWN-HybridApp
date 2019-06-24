@@ -29,5 +29,6 @@ const SingInNewForm = props => {
 }
 
 export default reduxForm({
-  form: 'signin-new'
+  form: 'signin-new',
+  destroyOnUnmount: false,
 })(SingInNewForm)
