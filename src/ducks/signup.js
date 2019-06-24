@@ -8,31 +8,6 @@ import history from '../history';
 import {reset} from 'redux-form';
 
 const initialState = {    
-    fullName: {
-        value: "",
-        error: false,
-        helperText: "",
-    },
-    phone: {
-        value: "",
-        error: false,
-        helperText: "",
-    },
-    email: {
-        value: "",
-        error: false,
-        helperText: "",
-    },
-    password: {
-        value: "",
-        error: false,
-        helperText: "",
-    },
-    confirm: {
-        value: "",
-        error: false,
-        helperText: "",
-    },
     activeStep: 0,
 
     submitEnabled: false,
@@ -105,6 +80,7 @@ export const registerAccount = data => dispatch => {
             dispatch({type: REGISTER_SUCCESS});
             dispatch(reset('signup-start'));
             dispatch(reset('signup-end'));
+            dispatch({type: CREATE_WALLET, data});
             history.push(ROUTE_CREATE_WALLET);
         }))
         .catch(err => dispatch({ type: REGISTER_FAILED, err}));
@@ -163,31 +139,6 @@ export const signup = (state = initialState, action) => {
                 submitLoading: false, 
                 serverError: "",
                 activeStep: 0,
-                fullName: {
-                    value: "",
-                    error: false,
-                    helperText: "",
-                },
-                phone: {
-                    value: "",
-                    error: false,
-                    helperText: "",
-                },
-                email: {
-                    value: "",
-                    error: false,
-                    helperText: "",
-                },
-                password: {
-                    value: "",
-                    error: false,
-                    helperText: "",
-                },
-                confirm: {
-                    value: "",
-                    error: false,
-                    helperText: "",
-                },
             }
         
         case REGISTER_WALLET_FAILED:
@@ -225,7 +176,7 @@ export const signup = (state = initialState, action) => {
         case CREATE_WALLET:
             return {
                 ...state,
-                walletAddress: action.wallet.address,
+                walletAddress: action.data.wallet,
             };
 
         default:

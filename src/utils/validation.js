@@ -30,3 +30,8 @@ export const phone = value => value && !isMobilePhone(value) ? 'Invalid phone nu
 export const password = value => value && isWeakPassword(value) ? 'Password must contain min 8 characters: only latin Capital Letters, Lower-Case Letters and Numbers' : undefined;
 
 export const passwordConfirm = (value, allValues) => value && allValues.password !== value ? 'This field must match with your password field' : undefined;
+export const loginPasswordConfirm = (value) => {
+    const currentPassword = localStorage.getItem("wallet-password");
+    return (value || currentPassword) && currentPassword !== value ? 'This field must match with your password' : undefined
+}
+

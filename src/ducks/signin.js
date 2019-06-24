@@ -8,30 +8,26 @@ import EtherUtil from "../utils/ethers";
 import history from '../history';
 
 const initialState = {    
-    password: {
-        value: "",
-        error: false,
-        helperText: "",
-    },
     loginMnemonic: {
         value: ["", "", "", "", "", "", "", "", "", "", "", ""],
         error: false,
         helperText: "",
     },
-    submitEnabled: false,
-    submitLoading: false,
-
     walletPassword: localStorage.getItem("wallet-password"),
-    walletJson: localStorage.getItem("wallet-json"),
+
+    activeStep: 1,
 
     failed: false,
     error: "",
-    
 };
 
-const LOGIN_SENT = "LOGIN_SENT";
-const LOGIN_SUCCESS = "LOGIN_SUCCESS";
-const LOGIN_FAILED = "LOGIN_FAILED";
+const LOGIN_WALLET_SENT = "LOGIN_WALLET_SENT";
+const LOGIN_WALLET_SUCCESS = "LOGIN_WALLET_SUCCESS";
+const LOGIN_WALLET_FAILED = "LOGIN_WALLET_FAILED";
+
+const LOGIN_EMAIL_SENT = "LOGIN_EMAIL_SENT";
+const LOGIN_EMAIL_SUCCESS = "LOGIN_EMAIL_SUCCESS";
+const LOGIN_EMAIL_FAILED = "LOGIN_EMAIL_FAILED";
 
 const WALLET_NOT_FOUND = "WALLET_NOT_FOUND";
 
@@ -50,27 +46,29 @@ export const changeLoginMnemonic = (value, index) => ({
 });
 
 export const loginWithWallet = (wallet, password) => dispatch => {
-    dispatch({type: LOGIN_SENT, wallet});
+    dispatch({type: LOGIN_WALLET_SENT});
     return handleFetch("/sign-in/wallet", "POST", {
         wallet: wallet.address,
         password
     })
         .then(res => performResult(res, () => {
-            dispatch({type: LOGIN_SUCCESS});
+            dispatch({type: LOGIN_WALLET_SUCCESS});
             history.push(ROUTE_DASHBOARD);
         }))
-        .catch(err => dispatch({ type: LOGIN_FAILED, err}));
+        .catch(err => dispatch({ type: LOGIN_WALLET_FAILED, err}));
 };
 
 export const loginWithEmail = ({ email, password }) => dispatch => {
+    dispatch({type: LOGIN_EMAIL_SENT});
     return handleFetch("/sign-in/email", "POST", {
         email,
         password
     })
         .then(res => performResult(res, () => {
-            dispatch({type: LOGIN_SUCCESS}, res);
+            dispatch({type: LOGIN_EMAIL_SUCCESS}, res);
+            return res
         }))
-        .catch(err => dispatch({ type: LOGIN_FAILED, err}));
+        .catch(err => dispatch({ type: LOGIN_EMAIL_FAILED, err}));
 };
 
 
@@ -79,43 +77,39 @@ export const signin = (state = initialState, action) => {
     let newState;
 
     switch (action.type) {
-        case CHANGE_LOGIN_PASSWORD:
-            error = !(action.password === state.walletPassword);
-            newState = {...state, password: { value: action.password, error, helperText: error ? "Password incorrect" : ""}}
-            return {
-                ...newState,
-                submitEnabled: isReadyToSubmit(newState),
+
+        case CHANGE_LOGIN_MNEMONIC:
+            const mnemonicArray = state.loginMnemonic.value;
+            mnemonicArray[action.index] = action.value;
+
+            const mnemonicString = mnemonicArray.join(' ').toString();
+            error = !ValidationUtil.isValid(mnemonicString, RegExps.mnemonic);
+            newState = {
+                ...state,
+                loginMnemonic: {value: mnemonicArray, error, helperText: error ? "Mnemonic should be phrase of 12 words divided with a space" : ""},
             };
-
-            case CHANGE_LOGIN_MNEMONIC:
-                const mnemonicArray = state.loginMnemonic.value;
-                mnemonicArray[action.index] = action.value;
-
-                const mnemonicString = mnemonicArray.join(' ').toString();
-                error = !ValidationUtil.isValid(mnemonicString, RegExps.mnemonic);
-                newState = {
-                    ...state,
-                    loginMnemonic: {value: mnemonicArray, error, helperText: error ? "Mnemonic should be phrase of 12 words divided with a space" : ""},
-                };
-                return {...newState,  submitEnabled: isReadyToSubmit(newState)};
+            return {...newState,  submitEnabled: isReadyToSubmit(newState)};
             
-            case WALLET_NOT_FOUND:
-                return {...state, failed: true, error: "WALLET_NOT_FOUND"};
+        case WALLET_NOT_FOUND:
+            return {...state, failed: true, error: "WALLET_NOT_FOUND"};
 
-            case LOGIN_SENT:
-                return {...state, failed: false, submitLoading: true};
+        case LOGIN_WALLET_SENT:
+            return {...state, failed: false, submitLoading: true};
             
-            case LOGIN_SUCCESS:
-                return {...state, submitLoading: false, mnemonic: {value: "", error: false, helperText: ""}, 
-                    password: {
-                        value: "",
-                        error: false,
-                        helperText: "",
-                    }
-                };
+        case LOGIN_WALLET_SUCCESS:
+            return {...state, submitLoading: false};
             
-            case LOGIN_FAILED:
-                return {...state, failed: true, error: action.err, submitLoading: false};
+        case LOGIN_WALLET_FAILED:
+            return {...state, failed: true, error: action.err, submitLoading: false};
+
+        case LOGIN_EMAIL_SENT:
+            return {...state, failed: false, submitLoading: true};
+                
+        case LOGIN_EMAIL_SUCCESS:
+            return {...state, submitLoading: false, activeStep: 2};
+                
+        case LOGIN_EMAIL_FAILED:
+            return {...state, failed: true, error: action.err, submitLoading: false};
 
         default:
             return state;

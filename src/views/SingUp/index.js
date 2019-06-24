@@ -11,6 +11,7 @@ import {connect} from "react-redux";
 import ReCAPTCHA from "react-google-recaptcha";
 import SignUpStartForm from "../../components/Forms/SignUpStart";
 import SignUpEndForm from "../../components/Forms/SignUpEnd";
+import history from '../../history';
 
 import {
     getFormValues,
@@ -37,39 +38,9 @@ class SignUp extends React.Component {
 
     nextStep = () => this.props.changeCurrentStep(this.props.signup.activeStep + 1)
     prevStep = () => this.props.changeCurrentStep(this.props.signup.activeStep - 1) 
-
-    handleChange = name => event => {
-        this.props.changeStartInfo({
-            name,
-            value: event.target.value
-        });
-    };
     onCaptchaChange = captcha => this.setState({captcha});
-    handleChangePassword = event => {
-        this.props.changePassword(event.target.value);
-    };
 
-    handleChangeConfirm = event => {
-        this.props.changeConfirm(event.target.value);
-    };
-
-    createAccount = () => {
-        const {
-            fullName,
-            phone,
-            email
-        } = this.props.startFormValues;
-        const {
-            password
-        } = this.props.endFormValues;
-
-        this.props.registerAccount({
-            fullName,
-            phone,
-            email,
-            password
-        })
-    };
+    toCreateAccount = () => history.push("/create-wallet");
 
     render() {
         const { 
@@ -108,14 +79,8 @@ class SignUp extends React.Component {
                             Note, that if you lose your password you won’t be able to recover it because it is used to decrypt Private Key.
                         </Typography>
                         <SignUpEndForm currentPassword={this.props.startFormValues} />
-                        <Button className="register__btn" fullWidth variant="contained" disabled={!startFormValid || !endFormValid} color="primary" onClick={this.createAccount}>
-                            {submitLoading ?
-                                <CircularProgress disableShrink /> :
-                                <> 
-                                    Create
-                                    <KeyboardArrowRight />
-                                </>
-                            }
+                        <Button className="register__btn" fullWidth variant="contained" disabled={!startFormValid || !endFormValid} color="primary" onClick={this.toCreateAccount}>
+                            Create
                         </Button>
                         <div className="register__error">
                             {`${serverError}`}
