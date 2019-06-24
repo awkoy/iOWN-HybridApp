@@ -49,7 +49,7 @@ export const changeLoginMnemonic = (value, index) => ({
     value
 });
 
-export const login = (wallet, password) => dispatch => {
+export const loginWithWallet = (wallet, password) => dispatch => {
     dispatch({type: LOGIN_SENT, wallet});
     return handleFetch("/sign-in/wallet", "POST", {
         wallet: wallet.address,
@@ -58,6 +58,17 @@ export const login = (wallet, password) => dispatch => {
         .then(res => performResult(res, () => {
             dispatch({type: LOGIN_SUCCESS});
             history.push(ROUTE_DASHBOARD);
+        }))
+        .catch(err => dispatch({ type: LOGIN_FAILED, err}));
+};
+
+export const loginWithEmail = ({ email, password }) => dispatch => {
+    return handleFetch("/sign-in/email", "POST", {
+        email,
+        password
+    })
+        .then(res => performResult(res, () => {
+            dispatch({type: LOGIN_SUCCESS}, res);
         }))
         .catch(err => dispatch({ type: LOGIN_FAILED, err}));
 };

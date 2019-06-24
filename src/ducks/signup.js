@@ -5,6 +5,7 @@ import {handleFetch} from "../utils/fetch";
 import {performResult} from "../utils/stateManipulator";
 import EtherUtil from "../utils/ethers";
 import history from '../history';
+import {reset} from 'redux-form';
 
 const initialState = {    
     fullName: {
@@ -102,6 +103,8 @@ export const registerAccount = data => dispatch => {
     return handleFetch("/sign-up", "POST", data)
         .then(res => performResult(res, () => {
             dispatch({type: REGISTER_SUCCESS});
+            dispatch(reset('signup-start'));
+            dispatch(reset('signup-end'));
             history.push(ROUTE_CREATE_WALLET);
         }))
         .catch(err => dispatch({ type: REGISTER_FAILED, err}));

@@ -7,6 +7,14 @@ import Typography from '@material-ui/core/Typography';
 import {connect} from "react-redux";
 import Box from '@material-ui/core/Box';
 import Mnemonic from "../../components/mnemonic/Mnemonic";
+import SingInNewForm from "../../components/Forms/SingInNew";
+import { Link } from 'react-router-dom';
+import {ROUTE_SIGNUP} from "../../constants/routes";
+
+import {
+    getFormValues,
+    isValid
+  } from 'redux-form';
 
 import EtherUtil from "../../utils/ethers";
 
@@ -14,7 +22,8 @@ import {
     changeLoginPassword,
     changeLoginMnemonic,
     walletNotFound,
-    login
+    loginWithWallet,
+    loginWithEmail
 } from "../../ducks/signin";
 
 class SignIn extends React.Component {
@@ -23,7 +32,16 @@ class SignIn extends React.Component {
         this.props.changeLoginPassword(event.target.value);
     };
 
-    passwordLogin = async () => {
+    submitLoginEmail = async () => {
+        const {
+            email,
+            password
+        } = this.props.formValuesNew;
+
+        await this.props.loginWithEmail({email, password});
+    }
+
+    submitLoginWallet = async () => {
         const {
             walletPassword,
             walletJson
@@ -40,7 +58,7 @@ class SignIn extends React.Component {
             return this.props.walletNotFound();
         }
 
-        await this.props.login(wallet, walletPassword);
+        await this.props.loginWithWallet(wallet, walletPassword);
     };
 
     onMnemonicLoginClick = async () => {
@@ -57,6 +75,7 @@ class SignIn extends React.Component {
     
     render() {
         const { password, submitEnabled, submitLoading, walletPassword, loginMnemonic, failed, error } = this.props.signin;
+        const {formValidNew} = this.props;
 
         return (
             <Container component="main" maxWidth="xs">
@@ -64,7 +83,7 @@ class SignIn extends React.Component {
                     Login
                 </Typography>
 
-                {walletPassword && <Box>
+                {/* {walletPassword && <Box>
                     <TextField
                         required
                         fullWidth
@@ -76,7 +95,7 @@ class SignIn extends React.Component {
                         error={password.error}
                         helperText={password.helperText}
                     />
-                    <Button className="register__btn" onClick={this.passwordLogin} fullWidth variant="contained" disabled={!submitEnabled} color="primary">
+                    <Button className="register__btn" onClick={this.submitLoginWallet} fullWidth variant="contained" disabled={!submitEnabled} color="primary">
                         {submitLoading ?
                             <CircularProgress disableShrink /> :
                             <> 
@@ -84,9 +103,30 @@ class SignIn extends React.Component {
                             </>
                         }
                     </Button>
+                    <Box pt={2}>
+                        <Button onClick={this.goBack} fullWidth variant="contained" color="primary">
+                            Back
+                        </Button>
+                    </Box>
+                </Box>} */}
+
+                {<Box>
+                    <SingInNewForm />
+                    {formValidNew}
+                    <Button className="register__btn" onClick={this.submitLoginEmail} fullWidth variant="contained" disabled={!formValidNew} color="primary">
+                        Login
+                    </Button>
+                    <Typography variant="subtitle1" align="center" gutterBottom>
+                        Or
+                    </Typography>
+                    <Link to={ROUTE_SIGNUP}>
+                        <Button fullWidth variant="contained" color="primary">
+                            Create a new wallet
+                        </Button>
+                    </Link>
                 </Box>}
 
-                {!walletPassword && <Box>
+                {/* {!walletPassword && <Box>
                     <Mnemonic
                         editable
                         fullEditable
@@ -97,17 +137,12 @@ class SignIn extends React.Component {
                         {submitLoading ?
                             <CircularProgress disableShrink /> :
                             <> 
-                                Login
+                                Submit
                             </>
                         }
                     </Button>
-                </Box>}
+                </Box>} */}
                 
-                <Box pt={2}>
-                    <Button onClick={this.goBack} fullWidth variant="contained" color="primary">
-                        Back
-                    </Button>
-                </Box>
                 <div className="register__error">
                     {failed && `${error}`}
                 </div>
@@ -117,14 +152,17 @@ class SignIn extends React.Component {
 };
 
 const mapState2props = state => ({
-    signin: state.signin
+    signin: state.signin,
+    formValuesNew: getFormValues('signin-new')(state),
+    formValidNew: isValid('signin-new')(state),
 });
 
 const mapDispatch2props = {
     changeLoginPassword,
     changeLoginMnemonic,
     walletNotFound,
-    login
+    loginWithWallet,
+    loginWithEmail
 };
 
 export default connect(mapState2props, mapDispatch2props)(SignIn);
