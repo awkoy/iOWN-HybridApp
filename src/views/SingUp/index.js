@@ -1,6 +1,5 @@
 import React from "react";
 import Container from '@material-ui/core/Container';
-import TextField from '@material-ui/core/TextField';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
@@ -8,9 +7,15 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import InputMask from 'react-input-mask';
 import {connect} from "react-redux";
-//import ReCAPTCHA from "react-google-recaptcha";
+import ReCAPTCHA from "react-google-recaptcha";
+import SignUpStartForm from "../../components/Forms/SignUpStart";
+import SignUpEndForm from "../../components/Forms/SignUpEnd";
+
+import {
+    getFormValues,
+    isValid
+  } from 'redux-form';
 
 import {
     changeCurrentStep,
@@ -25,9 +30,9 @@ class SignUp extends React.Component {
     constructor(props) {
         super(props)
 
-        // this.state = {
-        //     captcha: false
-        // }
+        this.state = {
+            captcha: false
+        }
     }
 
     nextStep = () => this.props.changeCurrentStep(this.props.signup.activeStep + 1)
@@ -39,7 +44,7 @@ class SignUp extends React.Component {
             value: event.target.value
         });
     };
-    //onCaptchaChange = captcha => this.setState({captcha})
+    onCaptchaChange = captcha => this.setState({captcha});
     handleChangePassword = event => {
         this.props.changePassword(event.target.value);
     };
@@ -52,22 +57,30 @@ class SignUp extends React.Component {
         const {
             fullName,
             phone,
-            email,
+            email
+        } = this.props.startFormValues;
+        const {
             password
-        } = this.props.signup;
+        } = this.props.endFormValues;
 
         this.props.registerAccount({
-            fullName: fullName.value,
-            phone: phone.value,
-            email: email.value,
-            password: password.value
+            fullName,
+            phone,
+            email,
+            password
         })
     };
 
     render() {
-        const { activeStep, fullName, email, phone, password, confirm, submitEnabled, submitLoading, serverError } = this.props.signup;
+        const { 
+            activeStep, 
+            submitLoading, 
+            serverError 
+        } = this.props.signup;
 
-        //const {captcha} = this.state;
+        const {startFormValid, endFormValid} = this.props;
+
+        const {captcha} = this.state;
 
         return (
             <Container component="main" maxWidth="xs">
@@ -76,60 +89,13 @@ class SignUp extends React.Component {
                         <Typography variant="h5" align="center" gutterBottom>
                             Create new wallet
                         </Typography>
-                        <TextField
-                            required
-                            fullWidth
-                            label="Full Name"
-                            value={fullName.value}
-                            onChange={this.handleChange('fullName')}
-                            error={fullName.error}
-                            helperText={fullName.helperText}
-                            margin="normal"
-                        />
-                        <TextField
-                            required
-                            fullWidth
-                            type="email"
-                            label="Email Address"
-                            value={email.value}
-                            onChange={this.handleChange('email')}
-                            error={email.error}
-                            helperText={email.helperText}
-                            margin="normal"
-                        />
-                        <InputMask
-                            mask="+999999999999"
-                            type="phone"
-                            maskChar=" "
-                            onChange={this.handleChange('phone')}
-                            value={phone.value}
-                            error={phone.error}
-                            helperText={phone.helperText}
-                            >
-                            {() => <TextField
-                                required
-                                fullWidth
-                                label="Phone Number"
-                                margin="normal"
-                            />}
-                        </InputMask>
-                        <TextField
-                            required
-                            fullWidth
-                            type="password"
-                            label="Password"
-                            value={password.value}
-                            onChange={this.handleChangePassword}
-                            margin="normal"
-                            error={password.error}
-                            helperText={password.helperText}
-                        />
-                        {/* <Box pt={4}>
-                            <ReCAPTCHA
+                        <SignUpStartForm />
+                        <Box pt={4}>
+                            {/* <ReCAPTCHA
                                 sitekey={"6Lep4KkUAAAAAELJE5-uSfnYP6Xr_0Ik2YRs3OSU"}
                                 onChange={this.onCaptchaChange}
-                            />
-                        </Box> */}
+                            /> */}
+                        </Box>
                     </Box>
                 }
     
@@ -141,18 +107,8 @@ class SignUp extends React.Component {
                         <Typography variant="subtitle2" align="center" gutterBottom>
                             Note, that if you lose your password you won’t be able to recover it because it is used to decrypt Private Key.
                         </Typography>
-                        <TextField
-                            required
-                            fullWidth
-                            type="password"
-                            label="Password Confirm"
-                            value={confirm.value}
-                            onChange={this.handleChangeConfirm}
-                            margin="normal"
-                            error={confirm.error}
-                            helperText={confirm.helperText}
-                        />
-                        <Button className="register__btn" fullWidth variant="contained" disabled={!submitEnabled} color="primary" onClick={this.createAccount}>
+                        <SignUpEndForm currentPassword={this.props.startFormValues} />
+                        <Button className="register__btn" fullWidth variant="contained" disabled={!startFormValid || !endFormValid} color="primary" onClick={this.createAccount}>
                             {submitLoading ?
                                 <CircularProgress disableShrink /> :
                                 <> 
@@ -173,7 +129,7 @@ class SignUp extends React.Component {
                     position="bottom"
                     activeStep={activeStep}
                     nextButton={
-                        <Button size="small" onClick={this.nextStep} disabled={activeStep === 1}>
+                        <Button size="small" onClick={this.nextStep} disabled={activeStep === 1 || !startFormValid}>
                             Next
                             <KeyboardArrowRight />
                         </Button>
@@ -192,6 +148,10 @@ class SignUp extends React.Component {
 
 const mapState2props = state => ({
     signup: state.signup,
+    startFormValues: getFormValues('signup-start')(state),
+    startFormValid: isValid('signup-start')(state),
+    endFormValues: getFormValues('signup-end')(state),
+    endFormValid: isValid('signup-end')(state),
 });
 
 const mapDispatch2props = {
