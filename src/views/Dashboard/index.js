@@ -4,20 +4,24 @@ import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
-import QRCode from "qrcode.react";
 import DotsIcon from '@material-ui/icons/MoreVert';
 import Snackbar from '@material-ui/core/Snackbar';
 import {connect} from "react-redux";
 import { Link } from 'react-router-dom';
 import TransactionsTable from '../../components/Table';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Drawer from '@material-ui/core/Drawer';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import SettingsIcon from '@material-ui/icons/Settings';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
+import Address from "./Address";
+import Balance from "./Balance";
+
+import {getUserInfo} from "../../ducks/dashboard";
 
 class Dashboard extends React.Component {
 
@@ -29,102 +33,69 @@ class Dashboard extends React.Component {
             currentTab: 0,
             menuOpened: false
         }
+
+        this.props.getUserInfo()
+
     }
 
     toggleMenu = val => this.setState({menuOpened: val})
 
-    copy = text => {
-        const textField = document.createElement('textarea');
-        textField.innerText = text;
-        document.body.appendChild(textField);
-        textField.select();
-        document.execCommand('copy');
-        textField.remove();
-        this.setState({
-            openAlert: true
-        });
-    }
     handleCloseAlert = () => this.setState({openAlert: false});
     handleTabChange = (e, currentTab) => this.setState({currentTab});
 
     render () {
-        const {walletAddress} = this.props.signup;
+        const {userInfo: {
+            email, phone, fullName, wallet
+        }, userInfoLoaded} = this.props.dashboard;
+
         const {openAlert, currentTab} = this.state;
         return (
             <Container className="home dashboard" component="main" maxWidth="xs">
                 <Fab onClick={() => this.toggleMenu(true)} className="dashboard__menu-btn">
                     <DotsIcon />
                 </Fab>
+
+                {userInfoLoaded ? <CircularProgress /> : 
                 <Typography variant="subtitle2" align="center" gutterBottom>
-                    youremail@mail.com
-                </Typography>
-                {currentTab === 0 &&
-                    <Box className="dashboard__actions" align="left" pt={3}>
-                        <Typography variant="h5" align="left" gutterBottom>
-                            100 iOWN
-                        </Typography>
-                        <Link to="/coming-soon">
-                            <Button color="primary" variant="contained">
-                                Send
-                            </Button>
-                        </Link>
-                    </Box>
-                }
-                {currentTab === 1 &&
-                    <Box className="dashboard__actions" align="left" pt={3}>
-                        <Typography variant="h5" align="left" gutterBottom>
-                            100 ETH
-                        </Typography>
-                        <Link to="/coming-soon">
-                            <Button color="primary" variant="contained">
-                                Send
-                            </Button>
-                        </Link>
-                    </Box>
-                }
-                <Tabs
-                    value={currentTab}
-                    onChange={this.handleTabChange}
-                    indicatorColor="primary"
-                    textColor="primary"
-                    centered >
-                        <Tab label="iOWN" />
-                        <Tab label="Ethereum" />
-                </Tabs>
-                <Box className="dashboard__adress" align="left" pt={3}>
-                    <QRCode size={50} value={"0x36d4568A4F8E64F3501CAE1C7b034bBb5ba27D70"} />
-                    <Box className="dashboard__adress__container" pl={2}>
-                        <Box mb={1}>Your public iOWN address</Box>
-                        <div onClick={() => this.copy("0x36d4568A4F8E64F3501CAE1C7b034bBb5ba27D70")} className="copy__code__text">
-                            <b>{"0x36d4568A4F8E64F3501CAE1C7b034bBb5ba27D70"}</b> 
-                        </div>
-                    </Box>
-                </Box>
+                    {email}
+                </Typography>}
+                
+                
+                <Balance />
+
+                {userInfoLoaded ? <CircularProgress /> : <Address address={wallet} />}
+                
                 <Box pt={4} className="dashboard__actions">
-                    <Link to="/coming-soon">
-                        <Button color="primary" variant="contained">
-                            Refresh
-                        </Button>
-                    </Link>
-                    <Link to="/">
-                        <Button color="primary" variant="contained">
-                            Logout
-                        </Button>
-                    </Link>
+                    <Button color="primary" variant="contained">
+                        Refresh
+                    </Button>
+
+                    <Button color="primary" variant="contained">
+                        Recieve
+                    </Button>
                 </Box>
                 
-
                 <TransactionsTable />
 
                 <Drawer anchor="right" open={this.state.menuOpened} onClose={() => this.toggleMenu(false)}>
-                    {['Edit Account Info', 'Edit Password', 'Logout'].map((text, index) => (
-                        <Link to="/coming-soon">
-                            <ListItem button key={text}>
-                                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItem>
-                        </Link>
-                    ))}
+                    <Link to="/edit-account">
+                        <ListItem button>
+                            <ListItemIcon><SettingsIcon /></ListItemIcon>
+                            <ListItemText primary={"Edit Account"} />
+                        </ListItem>
+                    </Link>
+                    <Link to="/edit-password">
+                        <ListItem button>
+                            <ListItemIcon><LockOpenIcon /></ListItemIcon>
+                            <ListItemText primary={"Edit Password"} />
+                        </ListItem>
+                    </Link>
+                    <Link to="/">
+                        <ListItem button>
+                            <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+                            <ListItemText primary={"Logout"} />
+                        </ListItem>
+                    </Link>
                 </Drawer>
 
                 <Snackbar
@@ -144,7 +115,11 @@ class Dashboard extends React.Component {
 };
 
 const mapState2props = state => ({
-    signup: state.signup
+    dashboard: state.dashboard
 });
 
-export default connect(mapState2props)(Dashboard);
+const mapDispatch2props = {
+    getUserInfo
+};
+
+export default connect(mapState2props, mapDispatch2props)(Dashboard);

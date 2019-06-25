@@ -5,10 +5,12 @@ import { reducer as formReducer } from 'redux-form'
 ;
 import {signup} from "./signup";
 import {signin} from "./signin";
+import {dashboard} from "./dashboard";
 
 const reducer = combineReducers({
     signup,
     signin,
+    dashboard,
     form: formReducer
 });
 

@@ -24,6 +24,9 @@ const getError = (error) => {
 		case 'PASSWORDS_MISMATCH':
 			return 'Password was entered incorrectly';
 			break;
+		case 'INCORRECT_PASSWORD':
+			return 'Password incorrect'
+			break;
 		default:
             return error;
 			break;
