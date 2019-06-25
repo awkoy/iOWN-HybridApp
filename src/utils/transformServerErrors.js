@@ -1,5 +1,5 @@
-const transformError = (error) => {
-	switch (error[0]) {
+const getError = (error) => {
+	switch (error) {
 		case 'USER_NOT_FOUND':
 			return 'User not found. Please check your email or create new wallet';
 			break;
@@ -29,5 +29,19 @@ const transformError = (error) => {
 			break;
 	}
 };
+
+const transformError = errors => {
+	let errList = "";
+	if(Array.isArray(errors)) {
+		errors.forEach(el => {
+			errList = `${errList + getError(el)}`
+		});
+
+		return errList;
+	} else {
+		return getError(errors)
+	}
+	
+}
 
 export default transformError;

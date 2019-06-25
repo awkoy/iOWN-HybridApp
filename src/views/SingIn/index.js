@@ -8,7 +8,7 @@ import OldSignIn from './OldSignIn';
 class SignIn extends React.Component {
     
     render() {
-        const isNewUser = !localStorage.getItem("wallet-password");
+        const isNewUser = !localStorage.getItem("wallet-private-key");
         return (
             <Container component="main" maxWidth="xs">
                 <Typography variant="h5" align="center" gutterBottom>
