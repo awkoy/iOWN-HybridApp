@@ -9,12 +9,12 @@ import Footer from "./components/Footer";
 import Home from "./views/Home";
 import SignUp from "./views/SingUp";
 import SignIn from "./views/SingIn";
-import NewSignIn from "./views/SingIn/NewSignIn";
-import OldSignIn from "./views/SingIn/OldSignIn";
 import CreateWallet from "./views/CreateWallet";
 import SuccessRegistration from "./views/SuccessRegistration";
 import ComingSoon from "./views/ComingSoon";
 import Dashboard from "./views/Dashboard";
+import EditAccount from "./views/EditAccount";
+import EditPassword from "./views/EditPassword";
 
 import "./assets/styles/index.sass";
 
@@ -24,8 +24,6 @@ import {
     ROUTE_SIGNUP,
     ROUTE_CREATE_WALLET,
     ROUTE_SIGNIN,
-    ROUTE_SIGNIN_NEW,
-    ROUTE_SIGNIN_OLD,
     ROUTE_INDEX,
     ROUTE_SUCCESS_REGISTRATION,
     ROUTE_ABOUT,
@@ -52,6 +50,8 @@ ReactDOM.render(
                 <Route exact path={ROUTE_COOKIES_POLICY} component={ComingSoon} />
                 <Route exact path={ROUTE_COMING_SOON} component={ComingSoon} />
                 <Route exact path={ROUTE_DASHBOARD} component={Dashboard} />
+                <Route exact path={"/edit-account"} component={EditAccount} />
+                <Route exact path={"/edit-password"} component={EditPassword} />
             </Switch>
         </Router>
         <Footer/>
