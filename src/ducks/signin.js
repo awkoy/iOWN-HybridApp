@@ -38,6 +38,8 @@ const WALLET_NOT_FOUND = "WALLET_NOT_FOUND";
 const CHANGE_LOGIN_PASSWORD = "CHANGE_LOGIN_PASSWORD";
 const CHANGE_LOGIN_MNEMONIC = "CHANGE_LOGIN_MNEMONIC";
 
+const CHANGE_WHOLE_MNEMONIC = "CHANGE_WHOLE_MNEMONIC";
+
 const MNEMONIC_ERROR = "MNEMONIC_ERROR";
 
 export const walletNotFound = () => ({ type: WALLET_NOT_FOUND });
@@ -48,6 +50,7 @@ export const changeLoginMnemonic = (value, index) => ({
     index,
     value
 });
+export const changeWholeMnemonic = mnemonic => ({ type: CHANGE_WHOLE_MNEMONIC, mnemonic });
 
 export const resetSignIn = () => dispatch => {
     dispatch(reset('signin-new'));
@@ -95,6 +98,15 @@ export const signin = (state = initialState, action) => {
             newState = {
                 ...state,
                 loginMnemonic: {value: mnemonicArray, error, helperText: error ? "Mnemonic should be phrase of 12 words divided with a space" : ""},
+            };
+            return {...newState,  submitEnabled: isReadyToSubmit(newState)};
+        
+        case CHANGE_WHOLE_MNEMONIC:
+            const newMnemonicArray = action.mnemonic.trim().split(" ");
+            error = !ValidationUtil.isValid(action.mnemonic, RegExps.mnemonic);
+            newState = {
+                ...state,
+                loginMnemonic: {value: newMnemonicArray, error, helperText: error ? "Mnemonic should be phrase of 12 words divided with a space" : ""},
             };
             return {...newState,  submitEnabled: isReadyToSubmit(newState)};
             
