@@ -7,6 +7,7 @@ import {performResult} from "../utils/stateManipulator";
 import EtherUtil from "../utils/ethers";
 import history from '../history';
 import {reset} from 'redux-form';
+import transformError from '../utils/transformServerErrors';
 
 const initialState = {    
     loginMnemonic: {
@@ -39,8 +40,6 @@ const CHANGE_LOGIN_MNEMONIC = "CHANGE_LOGIN_MNEMONIC";
 
 const MNEMONIC_ERROR = "MNEMONIC_ERROR";
 
-export const changeLoginPassword = password => ({type: CHANGE_LOGIN_PASSWORD, password });
-
 export const walletNotFound = () => ({ type: WALLET_NOT_FOUND });
 export const mnemonicError = error => ({ type: MNEMONIC_ERROR, error});
 
@@ -65,7 +64,7 @@ export const loginWithWallet = (wallet, password) => dispatch => {
             dispatch({type: LOGIN_WALLET_SUCCESS});
             history.push(ROUTE_DASHBOARD);
         }))
-        .catch(err => dispatch({ type: LOGIN_WALLET_FAILED, err}));
+        .catch(err => dispatch({ type: LOGIN_WALLET_FAILED, err: transformError(err)}));
 };
 
 export const loginWithEmail = ({ email, password }) => dispatch => {
@@ -77,7 +76,7 @@ export const loginWithEmail = ({ email, password }) => dispatch => {
         .then(res => performResult(res, () => {
             dispatch({type: LOGIN_EMAIL_SUCCESS, address: res.payload});
         }))
-        .catch(err => dispatch({ type: LOGIN_EMAIL_FAILED, err}));
+        .catch(err => dispatch({ type: LOGIN_EMAIL_FAILED, err: transformError(err)}));
 };
 
 

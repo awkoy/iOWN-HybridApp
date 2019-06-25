@@ -10,11 +10,11 @@ const composeAsyncValidators = (validatorFns) => {
 
 const emailValidate = values => handleFetch("/validation/email", "POST", {
     email: values.email,
-}).then(res => {if(!res.success) throw {email: transformError(res.payload[0])}});
+}).then(res => {if(!res.success) throw {email: transformError(res.payload)}});
 
 const phoneValidate = values => handleFetch("/validation/phone", "POST", {
     phone: values.phone,
-}).then(res => {if(!res.success) throw {phone: transformError(res.payload[0])}});
+}).then(res => {if(!res.success) throw {phone: transformError(res.payload)}});
 
 const asyncValidate = composeAsyncValidators({
     email: emailValidate,

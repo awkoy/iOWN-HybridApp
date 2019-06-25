@@ -1,5 +1,5 @@
 const transformError = (error) => {
-	switch (error) {
+	switch (error[0]) {
 		case 'USER_NOT_FOUND':
 			return 'User not found. Please check your email or create new wallet';
 			break;
@@ -17,6 +17,9 @@ const transformError = (error) => {
 			break;
 		case 'AUTH_ERROR':
 			return 'Email or Password was entered incorrectly';
+			break;
+		case 'USER_NOT_VERIFIED':
+			return 'Please activate your account';
 			break;
 		case 'PASSWORDS_MISMATCH':
 			return 'Password was entered incorrectly';
