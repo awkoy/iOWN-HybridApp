@@ -6,6 +6,7 @@ import {performResult} from "../utils/stateManipulator";
 import EtherUtil from "../utils/ethers";
 import history from '../history';
 import {reset} from 'redux-form';
+import transformError from "../utils/transformServerErrors";
 
 const initialState = {    
     activeStep: 0,
@@ -69,7 +70,7 @@ export const handleCreateWallet = wallet => dispatch => {
             dispatch({type: REGISTER_WALLET_SUCCESS});
             dispatch({type: CREATE_WALLET, wallet});
         }))
-        .catch(err => dispatch({ type: REGISTER_WALLET_FAILED, err}));
+        .catch(err => dispatch({ type: REGISTER_WALLET_FAILED, err: transformError(err)}));
 }
 
 export const registerAccount = data => dispatch => {
@@ -83,7 +84,7 @@ export const registerAccount = data => dispatch => {
             dispatch({type: CREATE_WALLET, data});
             history.push(ROUTE_CREATE_WALLET);
         }))
-        .catch(err => dispatch({ type: REGISTER_FAILED, err}));
+        .catch(err => dispatch({ type: REGISTER_FAILED, err: transformError(err)}));
 };
 
 export const signup = (state = initialState, action) => {

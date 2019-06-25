@@ -1,4 +1,4 @@
-const transformError = (error) => {
+const getError = (error) => {
 	switch (error) {
 		case 'USER_NOT_FOUND':
 			return 'User not found. Please check your email or create new wallet';
@@ -18,6 +18,9 @@ const transformError = (error) => {
 		case 'AUTH_ERROR':
 			return 'Email or Password was entered incorrectly';
 			break;
+		case 'USER_NOT_VERIFIED':
+			return 'Please activate your account';
+			break;
 		case 'PASSWORDS_MISMATCH':
 			return 'Password was entered incorrectly';
 			break;
@@ -26,5 +29,19 @@ const transformError = (error) => {
 			break;
 	}
 };
+
+const transformError = errors => {
+	let errList = "";
+	if(Array.isArray(errors)) {
+		errors.forEach(el => {
+			errList = `${errList + getError(el)}`
+		});
+
+		return errList;
+	} else {
+		return getError(errors)
+	}
+	
+}
 
 export default transformError;

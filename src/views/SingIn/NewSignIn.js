@@ -24,7 +24,8 @@ import {
     walletNotFound,
     loginWithEmail,
     mnemonicError,
-    resetSignIn
+    resetSignIn,
+    changeWholeMnemonic
 } from "../../ducks/signin";
 
 class NewSignIn extends React.Component {
@@ -60,7 +61,7 @@ class NewSignIn extends React.Component {
         console.log(newWalletAddress, walletAddress, isConfirm)
 
         if (!isConfirm) {
-            return this.props.walletNotFound();
+            return this.props.mnemonicError("This wallet not match with your account wallet");
         } else {
             localStorage.setItem("wallet-private-key", pvkey);
             localStorage.setItem("wallet-password", password);
@@ -68,6 +69,9 @@ class NewSignIn extends React.Component {
             history.push("/dashboard");
         }
     }
+
+    onChangeMnemonic = (value, index) => (value.trim().split(" ").length === 12)
+        ? this.props.changeWholeMnemonic(value) : this.props.changeLoginMnemonic(value, index);
     
     render() {
         const { loginMnemonic, failed, error, activeStep, submitEnabled, submitLoading } = this.props.signin;
@@ -96,7 +100,7 @@ class NewSignIn extends React.Component {
                         editable
                         fullEditable
                         mnemonic={loginMnemonic.value}
-                        onChange={this.props.changeLoginMnemonic}
+                        onChange={this.onChangeMnemonic}
                     />
                     <Button className="register__btn" onClick={this.checkMnemonic}  fullWidth variant="contained" color="primary">
                         {!mnemonicLoader ? 'Submit' : <CircularProgress size={23}/>}
@@ -123,7 +127,8 @@ const mapDispatch2props = {
     walletNotFound,
     loginWithEmail,
     mnemonicError,
-    resetSignIn
+    resetSignIn,
+    changeWholeMnemonic
 };
 
 export default connect(mapState2props, mapDispatch2props)(NewSignIn);

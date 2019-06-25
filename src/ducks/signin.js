@@ -7,6 +7,7 @@ import {performResult} from "../utils/stateManipulator";
 import EtherUtil from "../utils/ethers";
 import history from '../history';
 import {reset} from 'redux-form';
+import transformError from '../utils/transformServerErrors';
 
 const initialState = {    
     loginMnemonic: {
@@ -37,9 +38,9 @@ const WALLET_NOT_FOUND = "WALLET_NOT_FOUND";
 const CHANGE_LOGIN_PASSWORD = "CHANGE_LOGIN_PASSWORD";
 const CHANGE_LOGIN_MNEMONIC = "CHANGE_LOGIN_MNEMONIC";
 
-const MNEMONIC_ERROR = "MNEMONIC_ERROR";
+const CHANGE_WHOLE_MNEMONIC = "CHANGE_WHOLE_MNEMONIC";
 
-export const changeLoginPassword = password => ({type: CHANGE_LOGIN_PASSWORD, password });
+const MNEMONIC_ERROR = "MNEMONIC_ERROR";
 
 export const walletNotFound = () => ({ type: WALLET_NOT_FOUND });
 export const mnemonicError = error => ({ type: MNEMONIC_ERROR, error});
@@ -49,6 +50,7 @@ export const changeLoginMnemonic = (value, index) => ({
     index,
     value
 });
+export const changeWholeMnemonic = mnemonic => ({ type: CHANGE_WHOLE_MNEMONIC, mnemonic });
 
 export const resetSignIn = () => dispatch => {
     dispatch(reset('signin-new'));
@@ -65,7 +67,7 @@ export const loginWithWallet = (wallet, password) => dispatch => {
             dispatch({type: LOGIN_WALLET_SUCCESS});
             history.push(ROUTE_DASHBOARD);
         }))
-        .catch(err => dispatch({ type: LOGIN_WALLET_FAILED, err}));
+        .catch(err => dispatch({ type: LOGIN_WALLET_FAILED, err: transformError(err)}));
 };
 
 export const loginWithEmail = ({ email, password }) => dispatch => {
@@ -77,7 +79,7 @@ export const loginWithEmail = ({ email, password }) => dispatch => {
         .then(res => performResult(res, () => {
             dispatch({type: LOGIN_EMAIL_SUCCESS, address: res.payload});
         }))
-        .catch(err => dispatch({ type: LOGIN_EMAIL_FAILED, err}));
+        .catch(err => dispatch({ type: LOGIN_EMAIL_FAILED, err: transformError(err)}));
 };
 
 
@@ -96,6 +98,15 @@ export const signin = (state = initialState, action) => {
             newState = {
                 ...state,
                 loginMnemonic: {value: mnemonicArray, error, helperText: error ? "Mnemonic should be phrase of 12 words divided with a space" : ""},
+            };
+            return {...newState,  submitEnabled: isReadyToSubmit(newState)};
+        
+        case CHANGE_WHOLE_MNEMONIC:
+            const newMnemonicArray = action.mnemonic.trim().split(" ");
+            error = !ValidationUtil.isValid(action.mnemonic, RegExps.mnemonic);
+            newState = {
+                ...state,
+                loginMnemonic: {value: newMnemonicArray, error, helperText: error ? "Mnemonic should be phrase of 12 words divided with a space" : ""},
             };
             return {...newState,  submitEnabled: isReadyToSubmit(newState)};
             
